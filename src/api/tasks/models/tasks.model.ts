@@ -11,6 +11,9 @@ export class Task extends Base {
   @prop({ ref: User })
   public author: Ref<User>;
 
+  @prop({ ref: () => TodoList })
+  public todoList: Ref<TodoList>[];
+
   constructor(task: CreateQuery<Task>) {
     super();
     Object.assign(this, task);

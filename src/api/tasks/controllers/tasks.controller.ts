@@ -14,11 +14,19 @@ import { ControllerBase } from "../../base/controller.base";
 import { Principal } from "../../auth/models/principal.model";
 import { TasksService } from "../services/tasks.service";
 import { DocumentTask, Task } from "../models/tasks.model";
+import {
+  DocumentTodoList,
+  TodoList,
+} from "../../todoList/models/todo-list.model";
 import { HttpError } from "../../../shared/models/http.error";
+import { TodoListService } from "../../todoList/services/todo-list.service";
 
 @controller("/tasks")
 export class TasksController extends ControllerBase {
-  constructor(private _taskService: TasksService) {
+  constructor(
+    private _taskService: TasksService,
+    private _todoListService: TodoListService
+  ) {
     super();
   }
 
@@ -62,11 +70,17 @@ export class TasksController extends ControllerBase {
     @response() res: Response
   ): Promise<Response> {
     const taskName: string = req.body.name;
+    const listName: string = req.body.list;
     try {
+      const list: DocumentTodoList[] = await this._todoListService.findListByName(
+        listName
+      );
+
       const task: DocumentTask = await this._taskService.createTask(
         new Task({
           name: taskName,
           author: user.details,
+          todoList: list,
         })
       );
       return this._success<{ task: DocumentTask }>(res, 200, { task });

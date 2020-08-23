@@ -11,8 +11,8 @@ export class TodoList extends Base {
   @prop({ ref: User })
   public author: Ref<User>;
 
-  // @prop({ ref: Task })
-  // public tasks: Ref<Task>[];
+  @prop({ ref: () => Task, required: false })
+  public tasks: Ref<Task>[];
 
   constructor(todoList: CreateQuery<TodoList>) {
     super();
