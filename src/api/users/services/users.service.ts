@@ -10,6 +10,9 @@ export class UsersService {
   public async createUser(user: User): Promise<DocumentUser> {
     return this._usersRepository.repository.create(user);
   }
+  public async findByID(id: string): Promise<DocumentUser> {
+    return this._usersRepository.repository.findById(id);
+  }
 
   public async findUserByEmail(email: string): Promise<DocumentUser> {
     return this._usersRepository.repository.findOne({ email: email });

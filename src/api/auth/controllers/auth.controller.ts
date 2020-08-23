@@ -1,32 +1,56 @@
-import { controller, httpPost, request, requestBody, response, } from 'inversify-express-utils';
-import { Request, Response } from 'express';
+import {
+  controller,
+  httpPost,
+  request,
+  requestBody,
+  response,
+} from "inversify-express-utils";
+import { Request, Response } from "express";
 
-import { ControllerBase } from '../../base/controller.base';
-import { AuthService } from '../services/auth.service';
-import { Credentials } from '../interfaces/credentials.interface';
-import { UserWithTokenResponse } from '../interfaces/user-with-token-response.interface';
+import { ControllerBase } from "../../base/controller.base";
+import { AuthService } from "../services/auth.service";
+import { Credentials } from "../interfaces/credentials.interface";
+import { UserWithTokenResponse } from "../interfaces/user-with-token-response.interface";
 
-@controller('/auth')
+@controller("/auth")
 export class AuthController extends ControllerBase {
+  constructor(private _authService: AuthService) {
+    super();
+  }
 
-    constructor(
-        private _authService: AuthService
-    ) {
-        super();
+  @httpPost("/signup")
+  public async signUp(
+    @requestBody() credentials: Credentials,
+    @request() req: Request,
+    @response() res: Response
+  ): Promise<Response> {
+    try {
+      const userWithToken: UserWithTokenResponse = await this._authService.signUp(
+        credentials
+      );
+      return this._success<{ userWithToken: UserWithTokenResponse }>(res, 200, {
+        userWithToken,
+      });
+    } catch (error) {
+      return this._fail(res, error);
     }
+  }
 
-    @httpPost('/')
-    public async signUp(
-        @requestBody() credentials: Credentials,
-        @request() req: Request,
-        @response() res: Response
-    ): Promise<Response> {
-        try {
-            const userWithToken: UserWithTokenResponse = await this._authService.signUp(credentials);
-            return this._success<{ userWithToken: UserWithTokenResponse }>(res, 200, { userWithToken });
-        } catch (error) {
-            return this._fail(res, error);
-        }
+  @httpPost("/signin")
+  public async signIn(
+    @requestBody() credentials: Credentials,
+    @request() req: Request,
+    @response() res: Response
+  ): Promise<Response> {
+    try {
+      const userWithToken: UserWithTokenResponse = await this._authService.signIn(
+        credentials
+      );
+      return this._success<{ userWithToken: UserWithTokenResponse }>(res, 200, {
+        userWithToken,
+      });
+    } catch (error) {
+      return this._fail(res, error);
     }
-
+  }
 }
