@@ -2,15 +2,15 @@ import { injectable } from "inversify";
 import { ReturnModelType } from "@typegoose/typegoose";
 
 import { DatabaseConnection } from "../../../database/database-connection";
-import { User } from "../models/user.model";
+import { TodoList } from "../models/todo-list.model";
 import { RepositoryBase } from "../../base/repository.base";
 
 @injectable()
-export class UsersRepository extends RepositoryBase<User> {
-  public repository: ReturnModelType<typeof User>;
+export class TodoListRepository extends RepositoryBase<TodoList> {
+  public repository: ReturnModelType<typeof TodoList>;
 
   constructor(private _databaseConnection: DatabaseConnection) {
     super();
-    this.initRepository(this._databaseConnection, User);
+    this.initRepository(this._databaseConnection, TodoList);
   }
 }

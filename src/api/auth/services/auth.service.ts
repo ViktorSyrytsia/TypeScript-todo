@@ -19,22 +19,17 @@ export class AuthService {
   constructor(private _usersService: UsersService) {}
 
   public async getUserFromToken(token: string): Promise<User> {
-    console.log("token:", token);
     if (!token) {
-      throw new HttpError(
-        UNAUTHORIZED,
-        "You are not logged in! Please log in to get access"
-      );
+      return null;
     }
     try {
       const decodedToken: any = jwt.verify(token, process.env.JWT_KEY);
-      console.log("decodedToken:", decodedToken);
       const user: DocumentUser = await this._usersService.findByID(
         decodedToken.id
       );
       return user;
     } catch (error) {
-      throw new HttpError(UNAUTHORIZED, "UNAUTHORIZED");
+      throw new HttpError(UNAUTHORIZED, "unauthorized");
     }
   }
 
