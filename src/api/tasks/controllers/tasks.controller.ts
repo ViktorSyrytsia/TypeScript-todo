@@ -12,18 +12,18 @@ import { INTERNAL_SERVER_ERROR, UNAUTHORIZED } from "http-status-codes";
 
 import { ControllerBase } from "../../base/controller.base";
 import { Principal } from "../../auth/models/principal.model";
-import { TodoListService } from "../services/todo-list.service";
-import { DocumentTodoList, TodoList } from "../models/todo-list.model";
+import { TasksService } from "../services/tasks.service";
+import { DocumentTask, Task } from "../models/tasks.model";
 import { HttpError } from "../../../shared/models/http.error";
 
-@controller("/lists")
-export class TodoListController extends ControllerBase {
-  constructor(private _todoListService: TodoListService) {
+@controller("/tasks")
+export class TasksController extends ControllerBase {
+  constructor(private _taskService: TasksService) {
     super();
   }
 
   @httpGet("/")
-  public async findLists(
+  public async findTasks(
     @principal() user: Principal,
     @queryParam("search") search: string,
     @request() req: Request,
@@ -31,14 +31,14 @@ export class TodoListController extends ControllerBase {
   ): Promise<Response> {
     try {
       if (user.details) {
-        const lists: DocumentTodoList[] = await this._todoListService.findListByName(
+        const tasks: DocumentTask[] = await this._taskService.findTaskByName(
           search
         );
-        let listsArray: DocumentTodoList[] = lists.filter(
-          (list) => list.author.toString() === user.details._id.toHexString()
+        let tasksArray: DocumentTask[] = tasks.filter(
+          (task) => task.author.toString() === user.details._id.toString()
         );
-        return this._success<{ lists: DocumentTodoList[] }>(res, 200, {
-          lists: listsArray,
+        return this._success<{ tasks: DocumentTask[] }>(res, 200, {
+          tasks: tasksArray,
         });
       } else {
         res.status(UNAUTHORIZED).json({
@@ -55,21 +55,21 @@ export class TodoListController extends ControllerBase {
   }
 
   @httpPost("/")
-  public async createList(
+  public async createTask(
     @principal() user: Principal,
     @queryParam("search") search: string,
     @request() req: Request,
     @response() res: Response
   ): Promise<Response> {
-    const listName: string = req.body.name;
+    const taskName: string = req.body.name;
     try {
-      const list: DocumentTodoList = await this._todoListService.createList(
-        new TodoList({
-          name: listName,
+      const task: DocumentTask = await this._taskService.createTask(
+        new Task({
+          name: taskName,
           author: user.details,
         })
       );
-      return this._success<{ list: DocumentTodoList }>(res, 200, { list });
+      return this._success<{ task: DocumentTask }>(res, 200, { task });
     } catch (error) {
       return this._fail(
         res,

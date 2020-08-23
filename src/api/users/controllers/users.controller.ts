@@ -15,6 +15,7 @@ import { Principal } from "../../auth/models/principal.model";
 import { UsersService } from "../services/users.service";
 import { DocumentUser } from "../models/user.model";
 import { HttpError } from "../../../shared/models/http.error";
+import { AuthMiddleware } from "../../auth/middleware/auth.middleware";
 
 @controller("/users")
 export class UsersController extends ControllerBase {
@@ -22,7 +23,7 @@ export class UsersController extends ControllerBase {
     super();
   }
 
-  @httpGet("/")
+  @httpGet("/", AuthMiddleware)
   public async findUsers(
     @principal() user: Principal,
     @queryParam("search") search: string,

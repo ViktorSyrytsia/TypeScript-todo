@@ -2,22 +2,19 @@ import { Base } from "@typegoose/typegoose/lib/defaultClasses";
 import { DocumentType, prop, Ref } from "@typegoose/typegoose";
 import { CreateQuery, DocumentToObjectOptions } from "mongoose";
 import { User } from "../../users/models/user.model";
-import { Task } from "../../tasks/models/tasks.model";
+import { TodoList } from "../../todoList/models/todo-list.model";
 
-export class TodoList extends Base {
+export class Task extends Base {
   @prop({ required: true })
   public name: string;
 
   @prop({ ref: User })
   public author: Ref<User>;
 
-  // @prop({ ref: Task })
-  // public tasks: Ref<Task>[];
-
-  constructor(todoList: CreateQuery<TodoList>) {
+  constructor(task: CreateQuery<Task>) {
     super();
-    Object.assign(this, todoList);
+    Object.assign(this, task);
   }
 }
 
-export type DocumentTodoList = DocumentType<TodoList>;
+export type DocumentTask = DocumentType<Task>;
