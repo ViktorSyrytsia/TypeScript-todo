@@ -12,7 +12,10 @@ export class Task extends Base {
   public author: Ref<User>;
 
   @prop({ ref: () => TodoList })
-  public todoList: Ref<TodoList>[];
+  public todoList: Ref<TodoList>;
+
+  @prop({ required: true })
+  public isFinished: boolean;
 
   constructor(task: CreateQuery<Task>) {
     super();

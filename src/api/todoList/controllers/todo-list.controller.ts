@@ -7,6 +7,7 @@ import {
   request,
   response,
   httpPost,
+  httpDelete,
   requestParam,
 } from "inversify-express-utils";
 import {
@@ -22,9 +23,8 @@ import { DocumentTodoList, TodoList } from "../models/todo-list.model";
 import { HttpError } from "../../../shared/models/http.error";
 import { TasksService } from "../../tasks/services/tasks.service";
 import { AuthMiddleware } from "../../auth/middleware/auth.middleware";
-import { params } from "inversify-express-utils/dts/decorators";
 
-@controller("/lists")
+@controller("/lists", AuthMiddleware)
 export class TodoListController extends ControllerBase {
   constructor(
     private _todoListService: TodoListService,
@@ -33,7 +33,7 @@ export class TodoListController extends ControllerBase {
     super();
   }
 
-  @httpGet("/", AuthMiddleware)
+  @httpGet("/")
   public async findLists(
     @principal() user: Principal,
     @queryParam("search") search: string,
@@ -90,7 +90,7 @@ export class TodoListController extends ControllerBase {
     }
   }
 
-  @httpGet("/:id", AuthMiddleware)
+  @httpGet("/:id")
   public async findListById(
     @principal() user: Principal,
     @queryParam("search") search: string,
@@ -123,6 +123,27 @@ export class TodoListController extends ControllerBase {
           message: "You need to authorize first",
         });
       }
+    } catch (error) {
+      return this._fail(
+        res,
+        new HttpError(INTERNAL_SERVER_ERROR, error.message)
+      );
+    }
+  }
+
+  @httpDelete("/:id")
+  public async deleteList(
+    @principal() user: Principal,
+    @requestParam() params: any,
+    @request() req: Request,
+    @response() res: Response
+  ): Promise<Response> {
+    try {
+      const id: string = params.id;
+      await this._todoListService.deleteList(id);
+      return this._success<{ list: DocumentTodoList }>(res, 200, {
+        list: null,
+      });
     } catch (error) {
       return this._fail(
         res,

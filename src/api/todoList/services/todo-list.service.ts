@@ -13,6 +13,9 @@ export class TodoListService {
   public async findByID(id: string): Promise<DocumentTodoList> {
     return this._todoListRepository.repository.findById(id);
   }
+  public async deleteList(id: string): Promise<DocumentTodoList> {
+    return this._todoListRepository.repository.findByIdAndDelete(id);
+  }
 
   public async findListByName(
     searchValue: string
@@ -22,5 +25,9 @@ export class TodoListService {
           name: searchValue,
         })
       : this._todoListRepository.repository.find();
+  }
+
+  public async saveList(list: DocumentTodoList): Promise<void> {
+    list.save();
   }
 }
