@@ -23,7 +23,9 @@
     "inversify-express-utils": "^6.3.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.0",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "swagger-express-typescript": "^1.0.2",
+    "swagger-ui-dist": "^3.32.4"
   },
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",

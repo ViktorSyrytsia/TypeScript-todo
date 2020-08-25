@@ -9,6 +9,12 @@ import {
   httpPost,
 } from "inversify-express-utils";
 import { INTERNAL_SERVER_ERROR } from "http-status-codes";
+import {
+  ApiPath,
+  ApiOperationGet,
+  SwaggerDefinitionConstant,
+  ApiOperationPost,
+} from "swagger-express-typescript";
 
 import { ControllerBase } from "../../base/controller.base";
 import { Principal } from "../../auth/models/principal.model";
@@ -17,12 +23,31 @@ import { DocumentUser } from "../models/user.model";
 import { HttpError } from "../../../shared/models/http.error";
 import { AuthMiddleware } from "../../auth/middleware/auth.middleware";
 
+@ApiPath({
+  path: "/api/v1/users",
+  name: "User",
+  security: { apiKeyHeader: [] },
+})
 @controller("/users")
 export class UsersController extends ControllerBase {
   constructor(private _userService: UsersService) {
     super();
   }
 
+  @ApiOperationGet({
+    description: "Get users objects list",
+    summary: "Get users list",
+    responses: {
+      200: {
+        description: "Success",
+        type: SwaggerDefinitionConstant.Response.Type.ARRAY,
+        model: "User",
+      },
+    },
+    security: {
+      apiKeyHeader: [],
+    },
+  })
   @httpGet("/", AuthMiddleware)
   public async findUsers(
     @principal() user: Principal,
@@ -41,6 +66,20 @@ export class UsersController extends ControllerBase {
     }
   }
 
+  @ApiOperationPost({
+    description: "Post user object",
+    summary: "Post new user",
+    parameters: {
+      body: { description: "New User", required: true, model: "User" },
+    },
+    responses: {
+      200: { description: "Success" },
+      400: { description: "Parameters fail" },
+    },
+    security: {
+      apiKeyHeader: [],
+    },
+  })
   @httpPost("/")
   public async createUser(
     @principal() user: Principal,
